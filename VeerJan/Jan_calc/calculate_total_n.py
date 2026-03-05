@@ -1,13 +1,13 @@
 """
-Calculate total moles of helium-4 in the cryogenic system.
+Calculate total moles of helium in the cryogenic system.
 """
 
 import numpy as np
 
 
-def calculate_total_n_he4(Q_dot, operating_hours, latent_heat, p_cool, v_mole, v_evap, temp_evap, v_pump, temp_pump, length, diameter_tube, int_points, temp_pump_val, temp_evap_val):
+def calculate_total_n(Q_dot, operating_hours, latent_heat, p_cool, v_mole, v_evap, temp_evap, v_pump, temp_pump, length, diameter_tube, int_points):
     """
-    Calculate total moles of helium-4 including evaporation, evaporator, pump, and tube components.
+    Calculate total moles of helium including evaporation, evaporator, pump, and tube components.
     
     Parameters:
     Q_dot : float
@@ -34,26 +34,22 @@ def calculate_total_n_he4(Q_dot, operating_hours, latent_heat, p_cool, v_mole, v
         Tube diameter (m)
     int_points : int
         Number of integration points
-    temp_pump_val : float
-        Pump temperature value (K)
-    temp_evap_val : float
-        Evaporator temperature value (K)
     
     Returns:
     n_total : float
-        Total moles of helium-4
+        Total moles of helium
     """
     from calculate_evaporation_rate import calculate_evaporation
     
     # Temperature height function
-    def temperature_height(height, pump_temp=temp_pump_val, evap_temp=temp_evap_val, length=length):
+    def temperature_height(height, pump_temp=temp_pump, evap_temp=temp_evap, length=length):
         return evap_temp + (pump_temp - evap_temp) * height / length
     
     # Helium evaporation calculation
-    n_l_4 = calculate_evaporation(Q_dot, operating_hours, latent_heat)
+    n_l = calculate_evaporation(Q_dot, operating_hours, latent_heat)
     
     # Helium in evaporator
-    n_e = p_cool * (v_evap - n_l_4 * v_mole) / (8.31 * temp_evap)
+    n_e = p_cool * (v_evap - n_l * v_mole) / (8.31 * temp_evap)
     
     # Helium in pump
     n_p = p_cool * (v_pump) / (8.31 * temp_pump)
@@ -63,6 +59,6 @@ def calculate_total_n_he4(Q_dot, operating_hours, latent_heat, p_cool, v_mole, v
     n_t = np.trapezoid(temperature_height(heights), heights) * p_cool * np.pi * diameter_tube**2 / (4 * 8.31)
     
     # Total moles
-    n_total = n_l_4 + n_e + n_p + n_t
+    n_total = n_l + n_e + n_p + n_t
     
     return n_total
