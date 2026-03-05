@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 time = 5*3600 #hours *3600 = sec
-p_room = 1e6 #80e5 #bar *10^5 = Pa
+p_room = 80e5 #bar *10^5 = Pa
 temp_pump = 3 #K
 temp_evap = 1 #K
 temp_step = 0.001 #K

@@ -16,7 +16,8 @@ tube_wall = 0.25e-3 #mm *10^-3
 tube_dia = 1e-2 #cm *10^-2
 
 int_points = 1000 #Number of points in integral
-latent_heat = 85 #J mol^-1
+l_he4 = 85 #Latent heat of He4 at 1K, J mol^-1
+l_he3 = 25 #Latent heat of He3 at 300mK, J mol^-1
 
 
 def thermal_conductivity(temperature):
@@ -45,6 +46,8 @@ def thermal_conductivity(temperature):
 def temperature_height(height, pump_temp=temp_pump, evap_temp=temp_evap, length=tube_len):
     return evap_temp + (pump_temp-evap_temp)*height/length
 
+'''
+latent_heat = l_he4
 temperatures = temperatures = np.linspace(temp_evap, temp_pump, int_points)
 cooling_power = np.pi*tube_dia*tube_wall/tube_len * np.trapezoid(thermal_conductivity(temperatures), temperatures)
 evap_rate = cooling_power/latent_heat #Moles per sec
@@ -64,8 +67,9 @@ print(f"Moles of liquid He in cryopump: {n_t}")
 n = n_l + n_e + n_p + n_t
 print(f"Total number of moles of He4 required: {n}")
 print(f"Volume of He4 (at STP) required: {n*22.4:.3f}L")
+#'''
 
-def mole_he4(pressure, v_evap=v_evap, v_pump=v_pump, int_points=int_points, verbose=False):
+def moles_he(pressure, latent_heat, temp_evap, temp_pump, v_evap=v_evap, v_pump=v_pump, int_points=int_points, verbose=False):
     temperatures = temperatures = np.linspace(temp_evap, temp_pump, int_points)
     cooling_power = np.pi*tube_dia*tube_wall/tube_len * np.trapezoid(thermal_conductivity(temperatures), temperatures)
     evap_rate = cooling_power/latent_heat #Moles per sec
@@ -79,25 +83,13 @@ def mole_he4(pressure, v_evap=v_evap, v_pump=v_pump, int_points=int_points, verb
     n_t = np.trapezoid(temperature_height(heights), heights)*pressure*np.pi*tube_dia**2/(4*8.31)
     
     if verbose:
-        print(f"Cooling power: {cooling_power} W")
-        print(f"Moles of liquid He in evaporator: {n_l}")
+        #Returns in the following order:
+        # Total number of moles required, cooling power,
+        # Moles of liquid He in evaporator,
+        # Moles of He vapour in evaporator, 
+        # Moles of He vapour in cryopump, 
+        # Moles of liquid He in cryopump
+        return (n_l + n_e + n_p + n_t, cooling_power, n_l, n_e, n_p, n_t)
+    else:
+        return n_l + n_e + n_p + n_t
 
-        print(f"Moles of He vapour in evaporator: {n_e}")
-
-        print(f"Moles of He vapour in cryopump: {n_p}")
-
-        print(f"Moles of liquid He in cryopump: {n_t}")
-
-        
-        print(f"Total number of moles of He4 required: {n}")
-        print(f"Volume of He4 (at STP) required: {n*22.4:.3f}L")
-    return n_l + n_e + n_p + n_t
-
-pressures = np.linspace(1, 100, 100)
-
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.scatter(22.4*mole_he4(pressures*1e5/300), pressures, c='b', marker='.')
-ax.set_xlabel("Litres of He4")
-ax.set_ylabel("Pressure at ambient temperature (bar)")
-plt.show()
