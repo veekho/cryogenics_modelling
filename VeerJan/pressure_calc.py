@@ -46,7 +46,7 @@ def thermal_conductivity(temperature):
 def temperature_height(height, pump_temp=temp_pump, evap_temp=temp_evap, length=tube_len):
     return evap_temp + (pump_temp-evap_temp)*height/length
 
-'''
+
 latent_heat = l_he4
 temperatures = temperatures = np.linspace(temp_evap, temp_pump, int_points)
 cooling_power = np.pi*tube_dia*tube_wall/tube_len * np.trapezoid(thermal_conductivity(temperatures), temperatures)
@@ -67,7 +67,6 @@ print(f"Moles of liquid He in cryopump: {n_t}")
 n = n_l + n_e + n_p + n_t
 print(f"Total number of moles of He4 required: {n}")
 print(f"Volume of He4 (at STP) required: {n*22.4:.3f}L")
-#'''
 
 def moles_he(pressure, latent_heat, temp_evap, temp_pump, v_evap=v_evap, v_pump=v_pump, int_points=int_points, verbose=False):
     temperatures = temperatures = np.linspace(temp_evap, temp_pump, int_points)
@@ -92,6 +91,7 @@ def moles_he(pressure, latent_heat, temp_evap, temp_pump, v_evap=v_evap, v_pump=
         return (n_l + n_e + n_p + n_t, cooling_power, n_l, n_e, n_p, n_t)
     else:
         return n_l + n_e + n_p + n_t
+    
 
 
 moles_he3 = moles_he(80e5, l_he3, 0.3, 1, )
