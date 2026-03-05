@@ -2,27 +2,25 @@
 Helium evaporation rate calculation for cryogenic system.
 """
 
-L = 83  # Latent heat of 4He at ~1 K (J/mol)
 
-
-def calculate_evaporation(Q_dot, operating_hours):
+def calculate_evaporation(Q_dot, operating_hours, latent_heat):
     """
-    Calculate helium evaporation rate and total moles evaporated.
+    Calculate total helium moles evaporated.
     
     Parameters:
     Q_dot : float
         Heat leak rate (W)
     operating_hours : float
         Operating time (hours)
+    latent_heat : float
+        Latent heat of evaporation (J/mol)
     
     Returns:
-    n_dot : float
-        Evaporation rate (mol/s)
     n_total : float
         Total moles evaporated
     """
     # Evaporation rate (mol/s)
-    n_dot = Q_dot / L
+    n_dot = Q_dot / latent_heat
     
     # Operating time (seconds)
     t = operating_hours * 3600
@@ -30,4 +28,4 @@ def calculate_evaporation(Q_dot, operating_hours):
     # Total moles evaporated
     n_total = n_dot * t
     
-    return n_dot, n_total
+    return n_total

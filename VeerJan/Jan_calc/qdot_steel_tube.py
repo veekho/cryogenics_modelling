@@ -6,8 +6,26 @@ Uses thermal conductivity from thermal_conductivity module.
 import numpy as np
 from thermal_conductivity import thermal_conductivity
 
+# Constants for steel tube geometry
+diameter_tube = 0.01  # 1 cm (m)
+steel_thickness = 0.00022  # 0.22 mm wall thickness (m)
 
-def qdot_steel_tube_conduction(T_cold, T_hot, length, area):
+
+def calculate_area():
+    """
+    Calculate the cross-sectional area of the steel tube.
+    
+    Returns:
+    area : float
+        Cross-sectional area (m²)
+    """
+    area_tube = np.pi * (diameter_tube / 2) ** 2
+    area_hollow = np.pi * (diameter_tube / 2 - steel_thickness) ** 2
+    area = area_tube - area_hollow
+    return area
+
+
+def qdot_ss(T_cold, T_hot, length):
     """
     Calculate heat leak through a support rod using thermal conductivity integration.
     
@@ -18,13 +36,14 @@ def qdot_steel_tube_conduction(T_cold, T_hot, length, area):
         Hot end temperature (K)
     length : float
         Length of the rod (m)
-    area : float
-        Cross-sectional area (m²)
     
     Returns:
     Q_dot : float
         Heat leak rate (W)
     """
+    # Calculate cross-sectional area
+    area = calculate_area()
+    
     # Numerical integration of k(T) dT
     T_vals = np.linspace(T_cold, T_hot, 5000)
     integral_k = np.trapezoid(thermal_conductivity(T_vals), T_vals)
