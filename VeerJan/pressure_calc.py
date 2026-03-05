@@ -88,8 +88,10 @@ def moles_he(pressure, latent_heat, temp_evap, temp_pump, v_evap=v_evap, v_pump=
         # Moles of liquid He in evaporator,
         # Moles of He vapour in evaporator, 
         # Moles of He vapour in cryopump, 
-        # Moles of liquid He in cryopump
+        # Moles of He vapour in tube
         return (n_l + n_e + n_p + n_t, cooling_power, n_l, n_e, n_p, n_t)
     else:
         return n_l + n_e + n_p + n_t
 
+
+moles_he3 = moles_he(80e5, l_he3, 0.3, 1, )
